@@ -15,26 +15,20 @@ export default function PostForm({ post }: { post?: Post }) {
   async function uploadImage(file: File): Promise<string | null> {
     setUploading(true);
     try {
-      // 1. Ask our server for a presigned R2 upload URL
+      const formData = new FormData();
+      formData.append("file", file);
+
       const res = await fetch("/api/upload", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contentType: file.type, size: file.size }),
+        body: formData,
       });
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Could not get an upload URL");
+        throw new Error(body.error ?? "Image upload failed");
       }
-      const { uploadUrl, publicUrl } = await res.json();
 
-      // 2. Upload the file straight from the browser to Cloudflare R2
-      const put = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: { "Content-Type": file.type },
-        body: file,
-      });
-      if (!put.ok) throw new Error("Upload to R2 failed");
-
+      const { publicUrl } = await res.json();
       return publicUrl as string;
     } catch (err) {
       alert(err instanceof Error ? err.message : "Upload failed");
