@@ -3,7 +3,7 @@ import PostForm from "@/components/PostForm";
 import { createClient } from "@/lib/supabase/server";
 import type { Post } from "@/lib/types";
 
-export const metadata = { title: "Edit post" };
+export const metadata = { title: "Edit Note | thenotebin Admin" };
 
 export default async function EditPostPage({
   params,
@@ -20,8 +20,11 @@ export default async function EditPostPage({
   }
 
   return (
-    <div>
-      <h1 className="mb-4 text-2xl font-bold">Edit post</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Edit Note</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">Update content, metadata, or publishing status.</p>
+      </div>
       <PostForm post={data as Post} />
     </div>
   );
